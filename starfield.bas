@@ -3,6 +3,12 @@ rem https://github.com/neilsf/XC-BASIC/tree/master/examples/invaders
 rem https://www.c64-wiki.com/wiki/Character_set
 
 rem https://www.pagetable.com/c64ref/c64mem/
+rem https://github.com/Project-64/reloaded/blob/master/c64/mapc64/MAPC6412.TXT
+
+; poke 53272, 21
+; 21 is 0001 0101
+; bits 1-3 = 010 = decimal 2 so character data is 2 x 1024 = 2048 bytes from start of VIC memory
+; 
 
 ; include "xcb-ext-rasterinterrupt.bas"
 
@@ -10,22 +16,38 @@ const SCREEN      = $0400
 const COLOR       = $D800
 const BORDER      = $D020
 const BACKGR      = $D021
-const CHARBASE    = $3000
-const NUMCHARS    = $0800 ; 256 chars x 8 bytes each
+const CHAR_ROM    = $D000
+const CHAR_RAM    = $3000
+const NUMCHARS    = $0800 ; 256 chars x 8 bytes each 
+
 const VIC_CTRL    = $D018
 const CPU_IO      = $0001
 const SCRN_CTRL   = $D011
-const STAR1INIT   = $31D0 ; Init address for each star, CHARBASE plus offset
+const RASTERLINE  = $D012
+
+const STAR1INIT   = $31D0 ; Init address for each star, CHAR_RAM plus offset
 const STAR2INIT   = $3298
 const STAR3INIT   = $3240
 const STAR4INIT   = $32E0
-
 const STAR1LIMIT  = $3298 ; Limit for each star
 const STAR2LIMIT  = $3360 ; Once limit is reached, they are reset
 const STAR3LIMIT  = $3298
 const STAR4LIMIT  = $3360
 
-dim counter fast
+;dim row fast
+;dim col fast
+dim rastercount fast 
+dim starfieldPtr fast
+dim starfieldPtr2 fast
+dim starfieldPtr3 fast
+dim starfieldPtr4 fast 
+dim zeroPointer fast
+
+\starfieldPtr    = $f0
+\starfieldPtr2   = $f2
+\starfieldPtr3   = $f4
+\starfieldPtr4   = $f6
+\zeroPointer     = $f8
 
 goto start
 
@@ -38,10 +60,10 @@ proc copy_charset_to_ram
   
   poke \CPU_IO, (peek(\CPU_IO) & %11111011)               ; The '0' in bit 2 switches the character generator ROM in 
                                                           ; so that it can be read.
-  memcpy $D800, \CHARBASE, \NUMCHARS                      ; Copy entire ROM character set to RAM at $3000.
+  memcpy \CHAR_ROM, \CHAR_RAM, \NUMCHARS                      ; Copy entire ROM character set to RAM at $3000.
   poke \CPU_IO, (peek(\CPU_IO) | %0100)                   ; Switch I\O back in instead of char gen ROM.
   poke \VIC_CTRL, (peek(\VIC_CTRL) & %11110000) | %1100   ; Point VIC-II control register at mapped characters.
-  
+  ;poke 53272, (PEEK(53272)&240)+12
   enableirq
 
 endproc
@@ -51,7 +73,7 @@ endproc
 ; ------------------------------------------------------------------------------------------------------------------------------------
 proc CreateStarScreen
 
-  poke 53272,21
+  ;poke 53272,21
   char! = 0
   colourindex! = 0
   offset = 0
@@ -100,16 +122,42 @@ endproc
 ; ------------------------------------------------------------------------------------------------------------------------------------
 start:
   
-  poke BORDER, 0                                         ; Black screen background and border.
-  poke BACKGR, 0
+  poke \BORDER, 0                                         ; Black screen background and border.
+  poke \BACKGR, 0
   
   copy_charset_to_ram                                     
 
-  memset \SCREEN, 1000, 32                                ; Clear screen with spaces.
+  ;memset \SCREEN, 1000, 32                                ; Clear screen with spaces.
   
   CreateStarScreen
   
-  end
+  \rastercount = 0
+  
+loop:
+  
+;  asm "
+;@loop
+; lda #$ff                        ; Wait for raster to be off screen
+;@wait
+; cmp $d012
+; bne @wait
+ ;     "
+  
+  watch \RASTERLINE, 255          ; Wait for raster to be offscreen.
+  
+  inc \rastercount
+  if \rastercount > 3 then
+    \rastercount = 0
+  endif  
+  gosub DoStarfield
+  goto loop
+  
+  
+DoStarfield:
+  
+  
+  return
+  
 ; ------------------------------------------------------------------------------------------------------------------------------------
 ; Data declarations.
 ; ------------------------------------------------------------------------------------------------------------------------------------ 
