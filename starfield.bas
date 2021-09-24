@@ -9,7 +9,13 @@ rem https://github.com/Project-64/reloaded/blob/master/c64/mapc64/MAPC6412.TXT
 ; 21 is 0001 0101
 ; bits 1-3 = 010 = decimal 2 so character data is 2 x 1024 = 2048 bytes from start of VIC memory
 ; 
-
+;
+; Star shapes
+; 0000 0011 = 3
+; 0000 1100 = 12
+; 0011 0000 = 48
+; 1100 0000 = 192
+;
 ; include "xcb-ext-rasterinterrupt.bas"
 
 const SCREEN      = $0400
@@ -43,8 +49,8 @@ dim starfieldPtr3 fast
 dim starfieldPtr4 fast 
 dim zeroPointer fast
 
-\starfieldPtr    = $f0
-\starfieldPtr2   = $f2
+\starfieldPtr    = $31d0
+\starfieldPtr2   = $3298
 \starfieldPtr3   = $f4
 \starfieldPtr4   = $f6
 \zeroPointer     = $f8
@@ -80,11 +86,13 @@ proc CreateStarScreen
   
   poke \SCRN_CTRL, peek(\SCRN_CTRL) & %11101111    ; Screen off
   
-  for col! = 0 to 39
+  col! = 0
+  repeat
 	
     char! = \StarfieldRow![col!] 
 	
-    for row = 0 to 24
+    row = 0
+    repeat
 
       ;charat col!, row!, char!
       offset = (col! + (row * 40))
@@ -102,14 +110,18 @@ proc CreateStarScreen
 
       poke \COLOR + offset, \StarfieldColours![colourindex!]
 
-    next 
+      inc row
+
+    until row = 23
       
     inc colourindex!
     if colourindex! > 19 then
       colourindex! = 0
     endif
     
-  next 
+    inc col!
+    
+  until col! = 39
 	
   poke \SCRN_CTRL, peek(\SCRN_CTRL) | %00010000    ; Screen on
   
@@ -129,6 +141,7 @@ start:
 
   ;memset \SCREEN, 1000, 32                                ; Clear screen with spaces.
   
+  ;InitStarfield
   CreateStarScreen
   
   \rastercount = 0
@@ -155,8 +168,24 @@ loop:
   
 DoStarfield:
   
-  
+      poke \starfieldPtr, 0
+      poke \starfieldPtr2, 0
+      
+      ; -- Every frame
+      inc \starfieldPtr
+      poke \starfieldPtr, peek(starfieldPtr) | 3     
+      if \starfieldPtr = $3298 then
+        \starfieldPtr = $31d0
+      endif  
+      
+      ; -- Every 3
+      if \rastercount = 1 or \rastercount = 3 then
+        inc \starfieldPtr2
+        poke \starfieldPtr2, peek(starfieldPtr2) | 12
+      endif      
+      
   return
+
   
 ; ------------------------------------------------------------------------------------------------------------------------------------
 ; Data declarations.
