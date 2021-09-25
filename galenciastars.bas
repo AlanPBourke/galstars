@@ -69,10 +69,10 @@ goto start
 ; ------------------------------------------------------------------------------------------------------------------------------------
 proc CopyCharsetToRam
   
-	disableirq												; Turn off interrupts from the keyboard etc.
+	disableirq                                              ; Turn off interrupts from the keyboard etc.
   
 	poke \CPU_IO, (peek(\CPU_IO) & %11111011)               ; The '0' in bit 2 tells the CPU to stop looking at I\O
-															; and to start looking at the character set in ROM so that it can be read.
+                                                            ; and to start looking at the character set in ROM so that it can be read.
 
 	memcpy \CHAR_ROM, \CHAR_RAM, \NUMCHARS                  ; Copy the 2KB ROM character set to RAM starting at location $3000.
  
