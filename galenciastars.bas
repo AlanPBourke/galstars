@@ -13,7 +13,7 @@
 ;
 ; I briefly worked in the same dev house as Jason in the early 90s, and he was
 ; always ready to help other coders. I know he's had his health problems so if he 
-; ever reads this, I he's OK.
+; ever reads this, I hope he's OK.
 ;
 ; Useful Links
 ;
@@ -237,38 +237,37 @@ DoStarfield:
         \StarfieldPtr2 = \Star2Reset
     endif
 
-  ; Star 3 -----------------------------------------------
-  if (\RasterCount! & 1) = 1 then
-	inc \StarfieldPtr3                                      ; Star 3 updates every other frame.
-	poke \StarfieldPtr3, peek(StarfieldPtr3) | Star3Shape	
-;		 poke \StarfieldPtr!-1, 0
-	if \StarfieldPtr3 = \Star3Limit then
-	   \StarfieldPtr3 = \Star3Reset
-	endif
-  else
-	poke \StarfieldPtr3, peek(StarfieldPtr3) | Star3Shape
-  endif	  
+    ; Star 3 -----------------------------------------------
+    if (\RasterCount! & 1) = 1 then
+        inc \StarfieldPtr3                                      ; Star 3 updates every other frame.
+        poke \StarfieldPtr3, peek(StarfieldPtr3) | Star3Shape	
+        if \StarfieldPtr3 = \Star3Limit then
+            \StarfieldPtr3 = \Star3Reset
+        endif
+    else
+        poke \StarfieldPtr3, peek(StarfieldPtr3) | Star3Shape
+    endif	  
 
-  ; Star 4 -----------------------------------------------
-  inc \StarfieldPtr4                                        ; Star 4 updates 2 pixels every frame.
-  inc \StarfieldPtr4
-  poke \StarfieldPtr4, peek(StarfieldPtr4) | Star4Shape
-  poke \StarfieldPtr4 - 2, 0
-  if \StarfieldPtr4 = \Star4Limit then
-	\StarfieldPtr4 = \Star4Reset
-  endif
+    ; Star 4 -----------------------------------------------
+    inc \StarfieldPtr4                                        ; Star 4 updates 2 pixels every frame.
+    inc \StarfieldPtr4
+    poke \StarfieldPtr4, peek(StarfieldPtr4) | Star4Shape
+    poke \StarfieldPtr4 - 2, 0
+    if \StarfieldPtr4 = \Star4Limit then
+        \StarfieldPtr4 = \Star4Reset
+    endif
 	  
-  return
+    return
 
 BlinkOne:
 	
-  if \RasterCount! < 231 then
-	  poke \StaticStar1, peek(StaticStar1) | 192
-  else
-	  poke \StaticStar1, 0
-  endif	 
+    if \RasterCount! < 231 then
+        poke \StaticStar1, peek(StaticStar1) | 192
+    else
+        poke \StaticStar1, 0
+    endif	 
 
-  \Blinkflag! = 0
+    \Blinkflag! = 0
 
   return	
 	  
