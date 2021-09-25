@@ -79,7 +79,7 @@ proc CopyCharsetToRam
 	poke \CPU_IO, (peek(\CPU_IO) | %0100)                   ; Switch I\O back in instead of character set in ROM.
 	
 	poke \VIC_CTRL, (peek(\VIC_CTRL) & %11110000) | %1100   ; Tell the VIC-II to from now on look at location $3000 for the character set. 
-                                                            ; This is controlled by bits 1, 2 and 3 of location $D018 (VIC_CTRL)
+															; This is controlled by bits 1, 2 and 3 of location $D018 (VIC_CTRL)
 															; counting from right to left. Those three bits represent a number which
 															; when multiplied by 2048 gives the memory location where the character set 
 															; starts.
@@ -123,7 +123,7 @@ proc CreateStarScreen
 															; to the location we want.
 															
 			poke \SCREEN + offset, char!					; Stick the current character onto the screen at the current row and column.
-      
+	  
 			inc char!										; Point at the next char in the array.
 	  
 			if char! = 83 then
@@ -142,15 +142,15 @@ proc CreateStarScreen
 			inc row
 
 		until row = 23
-      
+	  
 		inc colourindex!									; Next column, next colour.	
 	
 		if colourindex! > 19 then
 			colourindex! = 0
 		endif
-    
+	
 		inc col!
-    
+	
 	until col! = 39
 	
 	poke \SCRN_CTRL, peek(\SCRN_CTRL) | %00010000    		; Turn the screen back on.
@@ -186,7 +186,7 @@ loop:
 	gosub DoStarfield										; Draw the stars.
 	
 	goto loop
-    
+	
 DoStarfield:
   
   
@@ -199,14 +199,14 @@ DoStarfield:
   
   
   if (\rastercount! & 1) = 1 then
-    inc \starfieldPtr										; Star 1 draws every other frame.
-    poke \starfieldPtr, peek(starfieldPtr) | Star1Shape    
-    ;poke \starfieldPtr-1, 0
-    if \starfieldPtr = \STAR1LIMIT then
-      \starfieldPtr = \STAR1INIT
-    endif
+	inc \starfieldPtr										; Star 1 draws every other frame.
+	poke \starfieldPtr, peek(starfieldPtr) | Star1Shape    
+	;poke \starfieldPtr-1, 0
+	if \starfieldPtr = \STAR1LIMIT then
+	  \starfieldPtr = \STAR1INIT
+	endif
   else
-    poke \starfieldPtr, peek(starfieldPtr) | Star1Shape        
+	poke \starfieldPtr, peek(starfieldPtr) | Star1Shape        
   endif 
 
   ; one pixel per frame
@@ -214,19 +214,19 @@ DoStarfield:
   poke \starfieldPtr2, peek(starfieldPtr2) | Star2Shape   
   ;poke \starfieldPtr2-1, 0
   if \starfieldPtr2 = \STAR2LIMIT then
-    \starfieldPtr2 = \star2Reset
+	\starfieldPtr2 = \star2Reset
   endif
 
   ; -- Every other frame
   if (\rastercount! & 1) = 1 then
-    inc \starfieldPtr3
-    poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape   
+	inc \starfieldPtr3
+	poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape   
 ;        poke \starfieldPtr-1, 0
-    if \starfieldPtr3 = \STAR3LIMIT then
-       \starfieldPtr3 = \star3Reset
-    endif
+	if \starfieldPtr3 = \STAR3LIMIT then
+	   \starfieldPtr3 = \star3Reset
+	endif
   else
-    poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape
+	poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape
   endif   
 
   ; two pixels per frame
@@ -235,23 +235,23 @@ DoStarfield:
   poke \starfieldPtr4, peek(starfieldPtr4) | Star4Shape
   poke \starfieldPtr4-2, 0
   if \starfieldPtr4 = \STAR4LIMIT then
-    \starfieldPtr4 = \star4Reset
+	\starfieldPtr4 = \star4Reset
   endif
-      
+	  
   return
 
 BlinkOne:
-    
+	
   if \rastercount! < 231 then
-      poke \staticStar1, peek(staticStar1) | 192
+	  poke \staticStar1, peek(staticStar1) | 192
   else
-      poke \staticStar1, 0
+	  poke \staticStar1, 0
   endif  
 
   \blinkflag! = 0
 
   return    
-      
+	  
 BlinkTheOther:
 
 	if \rastercount! < 231 then
@@ -280,4 +280,4 @@ data StarfieldColours![] = ~
 14,10,12,15,14,13,12,11,10,14, ~
 14,10,14,15,14,13,12,11,10,12
 
-                       
+					   
