@@ -11,10 +11,10 @@ rem https://github.com/Project-64/reloaded/blob/master/c64/mapc64/MAPC6412.TXT
 ; 
 ;
 ; Star shapes
-; 0000 0011 = 3
-; 0000 1100 = 12
-; 0011 0000 = 48
-; 1100 0000 = 192
+const Star1Shape = %00000011  ; 3
+const Star2Shape = %00001100  ; 12
+const Star3Shape = %00110000  ; 48
+const Star4Shape = %11000000  ; 192
 ;
 ; include "xcb-ext-rasterinterrupt.bas"
 
@@ -32,15 +32,25 @@ const SCRN_CTRL   = $D011
 const RASTERLINE  = $D012
 
 const STAR1INIT   = $31D0 ; Init address for each star, CHAR_RAM plus offset
-const STAR2INIT   = $3298
-const STAR3INIT   = $3240
-const STAR4INIT   = $32E0
 const STAR1LIMIT  = $3298 ; Limit for each star
-const STAR2LIMIT  = $3360 ; Once limit is reached, they are reset
-const STAR3LIMIT  = $3298
-const STAR4LIMIT  = $3360
+const star1Reset  = $31d0 ; Reset address for each star
 
-dim rastercount fast 
+const STAR2INIT   = $3298
+const STAR2LIMIT  = $3360 ; Once limit is reached, they are reset
+const star2Reset  = $3298
+
+const STAR3INIT   = $3240
+const STAR3LIMIT  = $3298
+const star3Reset  = $31d0
+
+const STAR4INIT   = $32E0
+const STAR4LIMIT  = $3360
+const star4Reset  = $3298
+
+const staticStar1 = $3250 ; 2 Locations for blinking static stars
+const staticStar2 = $31e0
+
+dim rastercount! fast 
 dim starfieldPtr fast
 dim starfieldPtr2 fast
 dim starfieldPtr3 fast
@@ -64,9 +74,10 @@ proc copy_charset_to_ram
   poke \CPU_IO, (peek(\CPU_IO) & %11111011)               ; The '0' in bit 2 switches the character generator ROM in 
                                                           ; so that it can be read.
   memcpy \CHAR_ROM, \CHAR_RAM, \NUMCHARS                      ; Copy entire ROM character set to RAM at $3000.
+ 
   poke \CPU_IO, (peek(\CPU_IO) | %0100)                   ; Switch I\O back in instead of char gen ROM.
   poke \VIC_CTRL, (peek(\VIC_CTRL) & %11110000) | %1100   ; Point VIC-II control register at mapped characters.
-  ;poke 53272, (PEEK(53272)&240)+12
+ 
   enableirq
 
 endproc
@@ -136,34 +147,38 @@ start:
   
   copy_charset_to_ram                                     
 
-  ;memset \SCREEN, 1000, 32                                ; Clear screen with spaces.
+  ;memset \CHAR_RAM, 2048, 0                              ; Clear user defined character set
   
-  ;InitStarfield
   CreateStarScreen
   
-  \rastercount = 0
+  \rastercount! = 0
   
 loop:
   
-  asm "
-@loop
- lda #$ff                        ; Wait for raster to be off screen
-@wait
- cmp $d012
- bne @wait
-     "
+;  asm "
+;@loop
+; lda #$ff                        ; Wait for raster to be off screen
+;@wait
+; cmp $d012
+; bne @wait
+;     "
   
-  ;watch \RASTERLINE, 255          ; Wait for raster to be offscreen.
+  watch \RASTERLINE, 255          ; Wait for raster to be offscreen.
   
-  inc \rastercount
- ; if \rastercount > 3 then
-  ;  \rastercount = 0
-  ;endif  
+  inc \rastercount!               ; Will automatically wrap 255 to 0 
   gosub DoStarfield
   goto loop
-  
-  
+    
 DoStarfield:
+  
+      ; Static flickering stars.
+      if \rastercount! < 231 then
+        poke \staticStar1, peek(staticStar1) | 192
+        poke \staticStar2, peek(staticStar2) | 192
+      else
+        poke \staticStar1, 0
+        poke \staticStar2, 0
+      endif  
   
       poke starfieldPtr,0
       poke starfieldPtr2,0
@@ -171,42 +186,45 @@ DoStarfield:
       poke starfieldPtr4,0
       
       ; -- Every other frame
-      if (\rastercount & 1) = 1 then
+      if (\rastercount! & 1) = 1 then
         inc \starfieldPtr
-        poke \starfieldPtr, peek(starfieldPtr) | 3     
+        poke \starfieldPtr, peek(starfieldPtr) | Star1Shape    
         ;poke \starfieldPtr-1, 0
         if \starfieldPtr = \STAR1LIMIT then
           \starfieldPtr = \STAR1INIT
         endif
+      else
+        poke \starfieldPtr, peek(starfieldPtr) | Star1Shape        
       endif 
 
       ; one pixel per frame
       inc \starfieldPtr2
-      poke \starfieldPtr2, peek(starfieldPtr2) | 12
+      poke \starfieldPtr2, peek(starfieldPtr2) | Star2Shape   
       ;poke \starfieldPtr2-1, 0
       if \starfieldPtr2 = \STAR2LIMIT then
-        \starfieldPtr2 = \STAR2INIT
+        \starfieldPtr2 = \star2Reset
       endif
   
       ; -- Every other frame
-      if (\rastercount & 1) = 1 then
+      if (\rastercount! & 1) = 1 then
         inc \starfieldPtr3
-        poke \starfieldPtr3, peek(starfieldPtr3) | 48
-        ;poke \starfieldPtr-1, 0
+        poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape   
+;        poke \starfieldPtr-1, 0
         if \starfieldPtr3 = \STAR3LIMIT then
-          \starfieldPtr3 = \STAR3INIT
+           \starfieldPtr3 = \star3Reset
         endif
+      else
+        poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape
       endif   
   
       ; two pixels per frame
       inc \starfieldPtr4
       inc \starfieldPtr4
-      poke \starfieldPtr4, peek(starfieldPtr4) | 192
-      ;poke \starfieldPtr4-2, 0
+      poke \starfieldPtr4, peek(starfieldPtr4) | Star4Shape
+      poke \starfieldPtr4-2, 0
       if \starfieldPtr4 = \STAR4LIMIT then
-        \starfieldPtr4 = \STAR4INIT
+        \starfieldPtr4 = \star4Reset
       endif
-
       
   return
 
