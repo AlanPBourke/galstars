@@ -4,61 +4,60 @@
 ; https://github.com/Jimmy2x2x/C64-Starfield/blob/master/starfield.asm
 
 ; Info about the C64 character set.
-rem https://github.com/neilsf/XC-BASIC/tree/master/examples/invaders
-rem https://www.c64-wiki.com/wiki/Character_set
+; https://github.com/neilsf/XC-BASIC/tree/master/examples/invaders
+; https://www.c64-wiki.com/wiki/Character_set
 
 ; Info about the C64 memory map.
-rem https://www.pagetable.com/c64ref/c64mem/
-rem https://github.com/Project-64/reloaded/blob/master/c64/mapc64/MAPC6412.TXT
+; https://www.pagetable.com/c64ref/c64mem/
+; https://github.com/Project-64/reloaded/blob/master/c64/mapc64/MAPC6412.TXT
 
 ; GRay Defender's breakdown of how the original ASM works - WATCH THIS.
 ; https://www.youtube.com/watch?v=47LakVkR5lg&t=1251s
 
-
 ; Star shapes
-const Star1Shape = %00000011  ; 3
-const Star2Shape = %00001100  ; 12
-const Star3Shape = %00110000  ; 48
-const Star4Shape = %11000000  ; 192
+const Star1Shape    = %00000011  ; 3
+const Star2Shape    = %00001100  ; 12
+const Star3Shape    = %00110000  ; 48
+const Star4Shape    = %11000000  ; 192
 
-const SCREEN	  = $0400
-const COLOUR	  = $D800
-const BORDER	  = $D020
-const BACKGR	  = $D021
-const CHAR_ROM	  = $D000
-const CHAR_RAM	  = $3000
-const NUMCHARS	  = $0800 ; 256 chars x 8 bytes each 
+const SCREEN        = $0400
+const COLOUR        = $D800
+const BORDER        = $D020
+const BACKGR        = $D021
+const CHAR_ROM       = $D000
+const CHAR_RAM      = $3000
+const NUMCHARS      = $0800 ; 256 chars x 8 bytes each 
 
-const VIC_CTRL	  = $D018
-const CPU_IO	  = $0001
-const SCRN_CTRL	  = $D011
-const RASTERLINE  = $D012
+const VIC_CTRL      = $D018
+const CPU_IO        = $0001
+const SCRN_CTRL     = $D011
+const RASTERLINE    = $D012
 
-const Star1Init	  = $31D0 ; Init address for each star, CHAR_RAM plus offset
-const Star1Limit  = $3298 ; Limit for each star
-const Star1Reset  = $31d0 ; Reset address for each star
+const Star1Init     = $31D0 ; Init address for each star, CHAR_RAM plus offset
+const Star1Limit    = $3298 ; Limit for each star
+const Star1Reset    = $31d0 ; Reset address for each star
 
-const Star2Init	  = $3298
-const Star2Limit  = $3360 ; Once limit is reached, they are reset
-const Star2Reset  = $3298
+const Star2Init     = $3298
+const Star2Limit    = $3360 ; Once limit is reached, they are reset
+const Star2Reset    = $3298
 
-const Star3Init	  = $3240
-const Star3Limit  = $3298
-const Star3Reset  = $31d0
+const Star3Init     = $3240
+const Star3Limit    = $3298
+const Star3Reset    = $31d0
 
-const Star4Init	  = $32E0
-const Star4Limit  = $3360
-const Star4Reset  = $3298
+const Star4Init     = $32E0
+const Star4Limit    = $3360
+const Star4Reset    = $3298
 
-const StaticStar1 = $3250 ; 2 Locations for blinking static stars
-const StaticStar2 = $31e0
+const StaticStar1   = $3250 ; 2 Locations for blinking static stars
+const StaticStar2   = $31e0
 
-dim RasterCount!	fast 
+dim RasterCount!    fast 
 dim StarfieldPtr    fast
-dim StarfieldPtr2	fast
-dim StarfieldPtr3	fast
-dim StarfieldPtr4	fast 
-dim Blinkflag!		fast
+dim StarfieldPtr2   fast
+dim StarfieldPtr3   fast
+dim StarfieldPtr4   fast 
+dim Blinkflag!      fast
 
 goto start
 
@@ -129,7 +128,7 @@ proc CreateStarScreen
             endif
 	  
             if char! = 108 then								
-                char! = 83									; If we've gone past character 107 then back to 83.
+                char! = 83                                    ; If we've gone past character 107 then back to 83.
             endif  
 			
             poke \COLOUR + offset, ~						
