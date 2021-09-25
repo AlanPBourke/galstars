@@ -83,15 +83,15 @@ proc CopyCharsetToRam
                                                             ; counting from right to left. Those three bits represent a number which
                                                             ; when multiplied by 2048 gives the memory location where the character set 
                                                             ; starts.
-															; Looking at the 'poke' above, we are ORing with the binary value 1100
-															; Ignoring the rightmost bit, we have 110 = decimal 6 x 2048 = 12288 which
-															; in hex is our location $3000.
+                                                            ; Looking at the 'poke' above, we are ORing with the binary value 1100
+                                                            ; Ignoring the rightmost bit, we have 110 = decimal 6 x 2048 = 12288 which
+                                                            ; in hex is our location $3000.
 	
-	enableirq												; Interrupts back on.
+    enableirq                                               ; Interrupts back on.
 
-	;memset \CHAR_RAM, 2048, 0								; Clear user defined character set.
-															; Uncomment this line to see the result of the CreateStarScreen 
-															; routine below.
+    memset \CHAR_RAM, 2048, 0                               ; Clear user defined character set.
+                                                            ; Comment this line out to see the result of the CreateStarScreen 
+                                                            ; routine below.
 	
 endproc
 
