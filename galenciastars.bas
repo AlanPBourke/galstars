@@ -128,34 +128,34 @@ proc CreateStarScreen
 	  
             if char! = 83 then
                 char! = 58                                  ; If we've gone past character 83 then start again.
-			endif
+            endif
 	  
-			if char! = 108 then								
-				char! = 83									; If we've gone past character 107 then start again.
-			endif  
+            if char! = 108 then								
+                char! = 83									; If we've gone past character 107 then back to 83.
+            endif  
 			
-			poke \COLOUR + offset, ~						
-				\StarfieldColours![colourindex!]			; The colours of the C64 character screen are defined by the 1000 locations from $D800
-															; onwards, each location corresponding to a location on the character screen at $0400
-															; So we put the current colour from the colour array into the colour location corresponding
-															; to the current row and column on the text screen.
-			inc row
+            poke \COLOUR + offset, ~						
+                \StarfieldColours![colourindex!]            ; The colours of the C64 character screen are defined by the 1000 locations from $D800
+                                                            ; onwards, each location corresponding to a location on the character screen at $0400
+                                                            ; So we put the current colour from the colour array into the colour location corresponding
+                                                            ; to the current row and column on the text screen.
+            inc row
 
-		until row = 23
+        until row = 23
 	  
-		inc colourindex!									; Next column, next colour.	
+        inc colourindex!                                    ; Next column, next colour.	
 	
-		if colourindex! > 19 then
-			colourindex! = 0
-		endif
+        if colourindex! > 19 then
+            colourindex! = 0
+        endif
 	
-		inc col!
+        inc col!
 	
-	until col! = 39
+    until col! = 39
 	
-	poke \SCRN_CTRL, peek(\SCRN_CTRL) | %00010000			; Turn the screen back on.
+    poke \SCRN_CTRL, peek(\SCRN_CTRL) | %00010000           ; Turn the screen back on.
   
-	; poke 198,0: wait 198, 1								; This waits for a keypress.
+	; poke 198,0: wait 198, 1                               ; If uncommented this waits for a keypress.
 	
 endproc
 
