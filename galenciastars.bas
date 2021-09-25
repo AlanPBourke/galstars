@@ -87,11 +87,11 @@ proc CopyCharsetToRam
 															; Ignoring the rightmost bit, we have 110 = decimal 6 x 2048 = 12288 which
 															; in hex is our location $3000.
 	
-	enableirq												; Interrupts back on.
+	enableirq                                               ; Interrupts back on.
 
 	;memset \CHAR_RAM, 2048, 0                              ; Clear user defined character set.
-															; Uncomment this line to see the result of the CreateStarScreen 
-															; routine below.
+                                                            ; Uncomment this line to see the result of the CreateStarScreen 
+                                                            ; routine below.
 	
 endproc
 
@@ -106,36 +106,36 @@ proc CreateStarScreen
 	colourindex! = 0
 	offset = 0
   
-	poke \SCRN_CTRL, peek(\SCRN_CTRL) & %11101111    		; Turn the screen off for speed and tidiness.
+	poke \SCRN_CTRL, peek(\SCRN_CTRL) & %11101111           ; Turn the screen off for speed and tidiness.
   
 	col! = 0
-	repeat													; C64 character text screen has 40 columns.
+	repeat                                                  ; C64 character text screen has 40 columns.
 	
-		char! = \StarfieldRow![col!] 						; Get the next character number from the StarfieldRow array. The first one is character 58 
-															; which is a ':'.
+		char! = \StarfieldRow![col!]                        ; Get the next character number from the StarfieldRow array. The first one is character 58 
+                                                            ; which is a ':'.
 	
-		row = 0												; C64 character text screen has 25 rows.
+		row = 0                                             ; C64 character text screen has 25 rows.
 		repeat
 
-			offset = (col! + (row * 40))					; The text screen can be though of as a grid. however in memory 
-															; it starts at location $0400 and is comprised of 1000 memory locations.
-															; Given a row and column this calculation gives the offset from the start of screen memory 
-															; to the location we want.
+			offset = (col! + (row * 40))                    ; The text screen can be though of as a grid. however in memory 
+                                                            ; it starts at location $0400 and is comprised of 1000 memory locations.
+                                                            ; Given a row and column this calculation gives the offset from the start of screen memory 
+                                                            ; to the location we want.
 															
-			poke \SCREEN + offset, char!					; Stick the current character onto the screen at the current row and column.
+			poke \SCREEN + offset, char!                    ; Stick the current character onto the screen at the current row and column.
 	  
-			inc char!										; Point at the next char in the array.
+			inc char!                                       ; Point at the next char in the array.
 	  
 			if char! = 83 then
-				char! = 58     								; If we've gone past character 83 then start again.
+				char! = 58                                  ; If we've gone past character 83 then start again.
 			endif
 	  
 			if char! = 108 then								
-				char! = 83									; If we've gone past character 107 then start again.
+				char! = 83                                  ; If we've gone past character 107 then start again.
 			endif  
 			
 			poke \COLOUR + offset, ~						
-				\StarfieldColours![colourindex!]			; The colours of the C64 character screen are defined by the 1000 locations from $D800
+				\StarfieldColours![colourindex!]            ; The colours of the C64 character screen are defined by the 1000 locations from $D800
 															; onwards, each location corresponding to a location on the character screen at $0400
 															; So we put the current colour from the colour array into the colour location corresponding
 															; to the current row and column on the text screen.
