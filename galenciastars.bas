@@ -84,8 +84,8 @@ proc CopyCharsetToRam
                                                             ; when multiplied by 2048 gives the memory location where the character set 
                                                             ; starts.
                                                             ; Looking at the 'poke' above, we are ORing with the binary value 1100
-                                                            ; Ignoring the rightmost bit, we have 110 = decimal 6 x 2048 = 12288 which
-                                                            ; in hex is our location $3000.
+                                                            ; Ignoring the rightmost bit, we have 110 = decimal 6, so 6 x 2048 = 12288 
+                                                            ; which in hex is the location $3000 where our copy of the character set is.
 	
     enableirq                                               ; Interrupts back on.
 
@@ -102,32 +102,32 @@ endproc
 ; ------------------------------------------------------------------------------------------------------------------------------------
 proc CreateStarScreen
 
-	char! = 0
-	colourindex! = 0
-	offset = 0
+    char! = 0
+    colourindex! = 0
+    offset = 0
   
-	poke \SCRN_CTRL, peek(\SCRN_CTRL) & %11101111			; Turn the screen off for speed and tidiness.
+    poke \SCRN_CTRL, peek(\SCRN_CTRL) & %11101111           ; Turn the screen off for speed and tidiness.
   
-	col! = 0
-	repeat													; C64 character text screen has 40 columns.
+    col! = 0
+    repeat                                                  ; C64 character text screen has 40 columns.
 	
-		char! = \StarfieldRow![col!]						; Get the next character number from the StarfieldRow array. The first one is character 58 
-															; which is a ':'.
+        char! = \StarfieldRow![col!]                        ; Get the next character number from the StarfieldRow array. The first one is character 58 
+                                                            ; which is a ':'.
 	
-		row = 0												; C64 character text screen has 25 rows.
-		repeat
+        row = 0                                             ; C64 character text screen has 25 rows.
+        repeat
 
-			offset = (col! + (row * 40))					; The text screen can be though of as a grid. however in memory 
-															; it starts at location $0400 and is comprised of 1000 memory locations.
-															; Given a row and column this calculation gives the offset from the start of screen memory 
-															; to the location we want.
+            offset = (col! + (row * 40))                    ; The text screen can be though of as a grid. however in memory 
+                                                            ; it starts at location $0400 and is comprised of 1000 memory locations.
+                                                            ; Given a row and column this calculation gives the offset from the start of screen memory 
+                                                            ; to the location we want.
 															
-			poke \SCREEN + offset, char!					; Stick the current character onto the screen at the current row and column.
+            poke \SCREEN + offset, char!                    ; Stick the current character onto the screen at the current row and column.
 	  
-			inc char!										; Point at the next char in the array.
+			inc char!                                       ; Point at the next char in the array.
 	  
-			if char! = 83 then
-				char! = 58									; If we've gone past character 83 then start again.
+            if char! = 83 then
+                char! = 58                                  ; If we've gone past character 83 then start again.
 			endif
 	  
 			if char! = 108 then								
