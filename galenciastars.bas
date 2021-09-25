@@ -273,13 +273,13 @@ BlinkOne:
 	  
 BlinkTheOther:
 
-	if \RasterCount! < 231 then
-		poke \StaticStar2, peek(StaticStar2) | 192
-	else
-		poke \StaticStar2, 0
-	endif  
+    if \RasterCount! < 231 then
+        poke \StaticStar2, peek(StaticStar2) | 192
+    else
+        poke \StaticStar2, 0
+    endif  
 
-	\Blinkflag! = 1
+    \Blinkflag! = 1
 
   return
   
