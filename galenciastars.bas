@@ -71,18 +71,18 @@ proc CopyCharsetToRam
   
     disableirq                                              ; Turn off interrupts from the keyboard etc.
   
-	poke \CPU_IO, (peek(\CPU_IO) & %11111011)				; The '0' in bit 2 tells the CPU to stop looking at I\O
-															; and to start looking at the character set in ROM so that it can be read.
+    poke \CPU_IO, (peek(\CPU_IO) & %11111011)               ; The '0' in bit 2 tells the CPU to stop looking at I\O
+                                                            ; and to start looking at the character set in ROM so that it can be read.
 
-	memcpy \CHAR_ROM, \CHAR_RAM, \NUMCHARS					; Copy the 2KB ROM character set to RAM starting at location $3000.
+    memcpy \CHAR_ROM, \CHAR_RAM, \NUMCHARS                  ; Copy the 2KB ROM character set to RAM starting at location $3000.
  
-	poke \CPU_IO, (peek(\CPU_IO) | %0100)					; Switch I\O back in instead of character set in ROM.
+    poke \CPU_IO, (peek(\CPU_IO) | %0100)                   ; Switch I\O back in instead of character set in ROM.
 	
-	poke \VIC_CTRL, (peek(\VIC_CTRL) & %11110000) | %1100	; Tell the VIC-II to from now on look at location $3000 for the character set. 
-															; This is controlled by bits 1, 2 and 3 of location $D018 (VIC_CTRL)
-															; counting from right to left. Those three bits represent a number which
-															; when multiplied by 2048 gives the memory location where the character set 
-															; starts.
+    poke \VIC_CTRL, (peek(\VIC_CTRL) & %11110000) | %1100   ; Tell the VIC-II to from now on look at location $3000 for the character set. 
+                                                            ; This is controlled by bits 1, 2 and 3 of location $D018 (VIC_CTRL)
+                                                            ; counting from right to left. Those three bits represent a number which
+                                                            ; when multiplied by 2048 gives the memory location where the character set 
+                                                            ; starts.
 															; Looking at the 'poke' above, we are ORing with the binary value 1100
 															; Ignoring the rightmost bit, we have 110 = decimal 6 x 2048 = 12288 which
 															; in hex is our location $3000.
