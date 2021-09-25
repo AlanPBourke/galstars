@@ -65,7 +65,7 @@ dim blinkflag! 		fast
 goto start
 
 ; ------------------------------------------------------------------------------------------------------------------------------------
-; This routine copies the C64 character set from ROM into RAM, allowing it to then be redefined. 
+; This routine copies the C64 character set from ROM into RAM, allowing it to then be redefined..
 ; ------------------------------------------------------------------------------------------------------------------------------------
 proc CopyCharsetToRam
   
