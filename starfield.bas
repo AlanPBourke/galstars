@@ -40,19 +40,16 @@ const STAR2LIMIT  = $3360 ; Once limit is reached, they are reset
 const STAR3LIMIT  = $3298
 const STAR4LIMIT  = $3360
 
-;dim row fast
-;dim col fast
 dim rastercount fast 
 dim starfieldPtr fast
 dim starfieldPtr2 fast
 dim starfieldPtr3 fast
 dim starfieldPtr4 fast 
-dim zeroPointer fast
 
 \starfieldPtr    = $31d0
 \starfieldPtr2   = $3298
-\starfieldPtr3   = $f4
-\starfieldPtr4   = $f6
+\starfieldPtr3   = $3240
+\starfieldPtr4   = $32e0
 \zeroPointer     = $f8
 
 goto start
@@ -148,45 +145,79 @@ start:
   
 loop:
   
-;  asm "
-;@loop
-; lda #$ff                        ; Wait for raster to be off screen
-;@wait
-; cmp $d012
-; bne @wait
- ;     "
+  asm "
+@loop
+ lda #$ff                        ; Wait for raster to be off screen
+@wait
+ cmp $d012
+ bne @wait
+     "
   
-  watch \RASTERLINE, 255          ; Wait for raster to be offscreen.
+  ;watch \RASTERLINE, 255          ; Wait for raster to be offscreen.
   
   inc \rastercount
-  if \rastercount > 3 then
-    \rastercount = 0
-  endif  
+ ; if \rastercount > 3 then
+  ;  \rastercount = 0
+  ;endif  
   gosub DoStarfield
   goto loop
   
   
 DoStarfield:
   
-      poke \starfieldPtr, 0
-      poke \starfieldPtr2, 0
+      poke starfieldPtr,0
+      poke starfieldPtr2,0
+      poke starfieldPtr3,0
+      poke starfieldPtr4,0
       
-      ; -- Every frame
-      inc \starfieldPtr
-      poke \starfieldPtr, peek(starfieldPtr) | 3     
-      if \starfieldPtr = $3298 then
-        \starfieldPtr = $31d0
-      endif  
-      
-      ; -- Every 3
-      if \rastercount = 1 or \rastercount = 3 then
-        inc \starfieldPtr2
-        poke \starfieldPtr2, peek(starfieldPtr2) | 12
-      endif      
+      ; -- Every other frame
+      if (\rastercount & 1) = 1 then
+        inc \starfieldPtr
+        poke \starfieldPtr, peek(starfieldPtr) | 3     
+        ;poke \starfieldPtr-1, 0
+        if \starfieldPtr = \STAR1LIMIT then
+          \starfieldPtr = \STAR1INIT
+        endif
+      endif 
+
+      ; one pixel per frame
+      inc \starfieldPtr2
+      poke \starfieldPtr2, peek(starfieldPtr2) | 12
+      ;poke \starfieldPtr2-1, 0
+      if \starfieldPtr2 = \STAR2LIMIT then
+        \starfieldPtr2 = \STAR2INIT
+      endif
+  
+      ; -- Every other frame
+      if (\rastercount & 1) = 1 then
+        inc \starfieldPtr3
+        poke \starfieldPtr3, peek(starfieldPtr3) | 48
+        ;poke \starfieldPtr-1, 0
+        if \starfieldPtr3 = \STAR3LIMIT then
+          \starfieldPtr3 = \STAR3INIT
+        endif
+      endif   
+  
+      ; two pixels per frame
+      inc \starfieldPtr4
+      inc \starfieldPtr4
+      poke \starfieldPtr4, peek(starfieldPtr4) | 192
+      ;poke \starfieldPtr4-2, 0
+      if \starfieldPtr4 = \STAR4LIMIT then
+        \starfieldPtr4 = \STAR4INIT
+      endif
+
       
   return
 
-  
+  DoStar2:
+
+      ; One per frame
+      inc \starfieldPtr2
+      poke \starfieldPtr2, peek(starfieldPtr2) | 12
+        
+  return
+      
 ; ------------------------------------------------------------------------------------------------------------------------------------
 ; Data declarations.
 ; ------------------------------------------------------------------------------------------------------------------------------------ 
