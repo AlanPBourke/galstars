@@ -11,6 +11,10 @@
 ; in an eyeball test at least, it does. I've commented the code quite heavily to 
 ; maybe help other people in tasks like redefining the char set and so on.
 ;
+; I briefly worked in the same dev house as Jason in the early 90s, and he was
+; always ready to help other coders. I know he's had his health problems so if he 
+; ever reads this, I he's OK.
+;
 ; Useful Links
 ;
 ; Jason Aldred's original Galencia starfield extracted to a standalone program.
