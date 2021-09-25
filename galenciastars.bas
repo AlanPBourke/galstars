@@ -164,28 +164,29 @@ endproc
 ; ------------------------------------------------------------------------------------------------------------------------------------
 start:
   
-	poke \BORDER, 0											; Black screen background and border.
-	poke \BACKGR, 0
+    poke \BORDER, 0                                         ; Black screen background and border.
+    poke \BACKGR, 0
   
-	CopyCharsetToRam										; Copy the ROM character set to RAM.									
+    CopyCharsetToRam                                        ; Copy the ROM character set to RAM.									
 
-	CreateStarScreen										; Set up the initial screen.
+    CreateStarScreen                                        ; Set up the initial screen.
   
-	\rastercount! = 0
-	\blinkflag! = 1
-	goto loop
+    \rastercount! = 0
+    \blinkflag! = 1
+	
+    goto loop
 	
 loop:
   
-	watch \RASTERLINE, 255									; Wait for raster to be offscreen. We do our drawing at that point 
-															; to avoid flicker.
+    watch \RASTERLINE, 255                                  ; Wait for raster to be offscreen. We do our drawing at that point 
+                                                            ; to avoid flicker.
   
-	inc \rastercount!										; A counter controlling which group of stars is redrawn, i.e. 
-															; this implements the different star speeds. Will automatically wrap 255 to 0 
+    inc \rastercount!                                       ; A counter controlling which group of stars is redrawn, i.e. 
+                                                            ; this implements the different star speeds. Will automatically wrap 255 to 0 
 	
-	gosub DoStarfield										; Draw the stars.
+    gosub DoStarfield                                       ; Draw the stars.
 	
-	goto loop
+    goto loop
 	
 DoStarfield:
   
