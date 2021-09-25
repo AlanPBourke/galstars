@@ -1,22 +1,25 @@
-rem https://github.com/Jimmy2x2x/C64-Starfield/blob/master/starfield.asm
+; Useful Links
+
+; Jason Aldred's original Galencia starfield extracted to a standalone program.
+; https://github.com/Jimmy2x2x/C64-Starfield/blob/master/starfield.asm
+
+; Info about the C64 character set.
 rem https://github.com/neilsf/XC-BASIC/tree/master/examples/invaders
 rem https://www.c64-wiki.com/wiki/Character_set
 
+; Info about the C64 memory map.
 rem https://www.pagetable.com/c64ref/c64mem/
 rem https://github.com/Project-64/reloaded/blob/master/c64/mapc64/MAPC6412.TXT
 
-; poke 53272, 21
-; 21 is 0001 0101
-; bits 1-3 = 010 = decimal 2 so character data is 2 x 1024 = 2048 bytes from start of VIC memory
-; 
-;
+; GRay Defender's breakdown of how the original ASM works - WATCH THIS.
+; https://www.youtube.com/watch?v=47LakVkR5lg&t=1251s
+
+
 ; Star shapes
 const Star1Shape = %00000011  ; 3
 const Star2Shape = %00001100  ; 12
 const Star3Shape = %00110000  ; 48
 const Star4Shape = %11000000  ; 192
-;
-; include "xcb-ext-rasterinterrupt.bas"
 
 const SCREEN	  = $0400
 const COLOUR	  = $D800
@@ -31,36 +34,31 @@ const CPU_IO	  = $0001
 const SCRN_CTRL	  = $D011
 const RASTERLINE  = $D012
 
-const STAR1INIT	  = $31D0 ; Init address for each star, CHAR_RAM plus offset
-const STAR1LIMIT  = $3298 ; Limit for each star
-const star1Reset  = $31d0 ; Reset address for each star
+const Star1Init	  = $31D0 ; Init address for each star, CHAR_RAM plus offset
+const Star1Limit  = $3298 ; Limit for each star
+const Star1Reset  = $31d0 ; Reset address for each star
 
-const STAR2INIT	  = $3298
-const STAR2LIMIT  = $3360 ; Once limit is reached, they are reset
-const star2Reset  = $3298
+const Star2Init	  = $3298
+const Star2Limit  = $3360 ; Once limit is reached, they are reset
+const Star2Reset  = $3298
 
-const STAR3INIT	  = $3240
-const STAR3LIMIT  = $3298
-const star3Reset  = $31d0
+const Star3Init	  = $3240
+const Star3Limit  = $3298
+const Star3Reset  = $31d0
 
-const STAR4INIT	  = $32E0
-const STAR4LIMIT  = $3360
-const star4Reset  = $3298
+const Star4Init	  = $32E0
+const Star4Limit  = $3360
+const Star4Reset  = $3298
 
-const staticStar1 = $3250 ; 2 Locations for blinking static stars
-const staticStar2 = $31e0
+const StaticStar1 = $3250 ; 2 Locations for blinking static stars
+const StaticStar2 = $31e0
 
-dim rastercount!	fast 
-dim starfieldPtr	fast
-dim starfieldPtr2	fast
-dim starfieldPtr3	fast
-dim starfieldPtr4	fast 
-dim blinkflag!		fast
-
-\starfieldPtr	 = $31d0
-\starfieldPtr2	 = $3298
-\starfieldPtr3	 = $3240
-\starfieldPtr4	 = $32e0
+dim RasterCount!	fast 
+dim StarfieldPtr    fast
+dim StarfieldPtr2	fast
+dim StarfieldPtr3	fast
+dim StarfieldPtr4	fast 
+dim Blinkflag!		fast
 
 goto start
 
@@ -124,7 +122,7 @@ proc CreateStarScreen
 															
             poke \SCREEN + offset, char!                    ; Stick the current character onto the screen at the current row and column.
 	  
-			inc char!                                       ; Point at the next char in the array.
+            inc char!                                       ; Point at the next char in the array.
 	  
             if char! = 83 then
                 char! = 58                                  ; If we've gone past character 83 then start again.
@@ -171,9 +169,13 @@ start:
 
     CreateStarScreen                                        ; Set up the initial screen.
   
-    \rastercount! = 0
-    \blinkflag! = 1
-	
+    \RasterCount!   = 0
+    \Blinkflag!     = 1
+    \StarfieldPtr   = \Star1Init
+    \StarfieldPtr2  = \Star2Init
+    \StarfieldPtr3  = \Star3Init
+    \StarfieldPtr4  = \Star4Init
+
     goto loop
 	
 loop:
@@ -181,7 +183,7 @@ loop:
     watch \RASTERLINE, 255                                  ; Wait for raster to be offscreen. We do our drawing at that point 
                                                             ; to avoid flicker.
   
-    inc \rastercount!                                       ; A counter controlling which group of stars is redrawn, i.e. 
+    inc \RasterCount!                                       ; A counter controlling which group of stars is redrawn, i.e. 
                                                             ; this implements the different star speeds. Will automatically wrap 255 to 0 
 	
     gosub DoStarfield                                       ; Draw the stars.
@@ -190,85 +192,84 @@ loop:
 	
 DoStarfield:
   
-  
-  on \blinkflag! gosub BlinkOne, BlinkTheOther				; Handle the static blinking stars.
+    on \Blinkflag! gosub BlinkOne, BlinkTheOther            ; Handle the static blinking stars.
 
-  poke starfieldPtr,0
-  poke starfieldPtr2,0
-  poke starfieldPtr3,0
-  poke starfieldPtr4,0
+    poke StarfieldPtr,0                                     ; Clear any existing stars by zeroing their memory location
+    poke StarfieldPtr2,0                                    
+    poke StarfieldPtr3,0
+    poke StarfieldPtr4,0
   
-  
-  if (\rastercount! & 1) = 1 then
-	inc \starfieldPtr										; Star 1 draws every other frame.
-	poke \starfieldPtr, peek(starfieldPtr) | Star1Shape	   
-	;poke \starfieldPtr-1, 0
-	if \starfieldPtr = \STAR1LIMIT then
-	  \starfieldPtr = \STAR1INIT
+    ; Star 1 -----------------------------------------------
+    if (\RasterCount! & 1) = 1 then
+        
+        inc \StarfieldPtr                                   ; Star 1 updates every other frame.
+        poke \StarfieldPtr, peek(StarfieldPtr) | Star1Shape  	   
+        
+        if \StarfieldPtr = \Star1Limit then
+            \StarfieldPtr = \Star1Reset
+        endif
+    
+    else
+        poke \StarfieldPtr, peek(StarfieldPtr) | Star1Shape		   
+    endif 
+
+    ; Star 2 -----------------------------------------------
+    inc \StarfieldPtr2                                      ; Star 2 updates every frame.
+    poke \StarfieldPtr2, peek(StarfieldPtr2) | Star2Shape	  
+    if \StarfieldPtr2 = Star2Limit then
+        \StarfieldPtr2 = \Star2Reset
+    endif
+
+  ; Star 3 -----------------------------------------------
+  if (\RasterCount! & 1) = 1 then
+	inc \StarfieldPtr3                                      ; Star 3 updates every other frame.
+	poke \StarfieldPtr3, peek(StarfieldPtr3) | Star3Shape	
+;		 poke \StarfieldPtr!-1, 0
+	if \StarfieldPtr3 = \Star3Limit then
+	   \StarfieldPtr3 = \Star3Reset
 	endif
   else
-	poke \starfieldPtr, peek(starfieldPtr) | Star1Shape		   
-  endif 
-
-  ; one pixel per frame
-  inc \starfieldPtr2
-  poke \starfieldPtr2, peek(starfieldPtr2) | Star2Shape	  
-  ;poke \starfieldPtr2-1, 0
-  if \starfieldPtr2 = \STAR2LIMIT then
-	\starfieldPtr2 = \star2Reset
-  endif
-
-  ; -- Every other frame
-  if (\rastercount! & 1) = 1 then
-	inc \starfieldPtr3
-	poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape	
-;		 poke \starfieldPtr-1, 0
-	if \starfieldPtr3 = \STAR3LIMIT then
-	   \starfieldPtr3 = \star3Reset
-	endif
-  else
-	poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape
+	poke \StarfieldPtr3, peek(StarfieldPtr3) | Star3Shape
   endif	  
 
-  ; two pixels per frame
-  inc \starfieldPtr4
-  inc \starfieldPtr4
-  poke \starfieldPtr4, peek(starfieldPtr4) | Star4Shape
-  poke \starfieldPtr4-2, 0
-  if \starfieldPtr4 = \STAR4LIMIT then
-	\starfieldPtr4 = \star4Reset
+  ; Star 4 -----------------------------------------------
+  inc \StarfieldPtr4                                        ; Star 4 updates 2 pixels every frame.
+  inc \StarfieldPtr4
+  poke \StarfieldPtr4, peek(StarfieldPtr4) | Star4Shape
+  poke \StarfieldPtr4 - 2, 0
+  if \StarfieldPtr4 = \Star4Limit then
+	\StarfieldPtr4 = \Star4Reset
   endif
 	  
   return
 
 BlinkOne:
 	
-  if \rastercount! < 231 then
-	  poke \staticStar1, peek(staticStar1) | 192
+  if \RasterCount! < 231 then
+	  poke \StaticStar1, peek(StaticStar1) | 192
   else
-	  poke \staticStar1, 0
+	  poke \StaticStar1, 0
   endif	 
 
-  \blinkflag! = 0
+  \Blinkflag! = 0
 
   return	
 	  
 BlinkTheOther:
 
-	if \rastercount! < 231 then
-		poke \staticStar2, peek(staticStar2) | 192
+	if \RasterCount! < 231 then
+		poke \StaticStar2, peek(StaticStar2) | 192
 	else
-		poke \staticStar2, 0
+		poke \StaticStar2, 0
 	endif  
 
-	\blinkflag! = 1
+	\Blinkflag! = 1
 
   return
   
 ; ------------------------------------------------------------------------------------------------------------------------------------
 ; Data declarations.
 ; ------------------------------------------------------------------------------------------------------------------------------------ 
-
 ; These are character indexes, not screen codes.
 ; 058 is a ':', 077 is a '\' 
 data StarfieldRow![] = ~
