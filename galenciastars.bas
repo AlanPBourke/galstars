@@ -79,7 +79,7 @@ proc CopyCharsetToRam
 	poke \CPU_IO, (peek(\CPU_IO) | %0100)                   ; Switch I\O back in instead of character set in ROM.
 	
 	poke \VIC_CTRL, (peek(\VIC_CTRL) & %11110000) | %1100   ; Tell the VIC-II to from now on look at location $3000 for the character set. 
-															; This is controlled by bits 1, 2 and 3 of location $D018 (VIC_CTRL)
+                                                            ; This is controlled by bits 1, 2 and 3 of location $D018 (VIC_CTRL)
 															; counting from right to left. Those three bits represent a number which
 															; when multiplied by 2048 gives the memory location where the character set 
 															; starts.
