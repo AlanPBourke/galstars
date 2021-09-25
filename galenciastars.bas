@@ -19,7 +19,7 @@ const Star4Shape = %11000000  ; 192
 ; include "xcb-ext-rasterinterrupt.bas"
 
 const SCREEN      = $0400
-const COLOR       = $D800
+const COLOUR      = $D800
 const BORDER      = $D020
 const BACKGR      = $D021
 const CHAR_ROM    = $D000
@@ -50,192 +50,220 @@ const star4Reset  = $3298
 const staticStar1 = $3250 ; 2 Locations for blinking static stars
 const staticStar2 = $31e0
 
-dim rastercount! fast 
-dim starfieldPtr fast
-dim starfieldPtr2 fast
-dim starfieldPtr3 fast
-dim starfieldPtr4 fast 
+dim rastercount! 	fast 
+dim starfieldPtr 	fast
+dim starfieldPtr2 	fast
+dim starfieldPtr3 	fast
+dim starfieldPtr4 	fast 
+dim blinkflag! 		fast
 
 \starfieldPtr    = $31d0
 \starfieldPtr2   = $3298
 \starfieldPtr3   = $3240
 \starfieldPtr4   = $32e0
-\zeroPointer     = $f8
 
 goto start
 
 ; ------------------------------------------------------------------------------------------------------------------------------------
-; Copy the ROM character set to RAM so that it can be redefined, and point the VIC-II at it.
+; This routine copies the C64 character set from ROM into RAM, allowing it to then be redefined. 
 ; ------------------------------------------------------------------------------------------------------------------------------------
-proc copy_charset_to_ram
+proc CopyCharsetToRam
   
-  disableirq
+	disableirq												; Turn off interrupts from the keyboard etc.
   
-  poke \CPU_IO, (peek(\CPU_IO) & %11111011)               ; The '0' in bit 2 switches the character generator ROM in 
-                                                          ; so that it can be read.
-  memcpy \CHAR_ROM, \CHAR_RAM, \NUMCHARS                      ; Copy entire ROM character set to RAM at $3000.
- 
-  poke \CPU_IO, (peek(\CPU_IO) | %0100)                   ; Switch I\O back in instead of char gen ROM.
-  poke \VIC_CTRL, (peek(\VIC_CTRL) & %11110000) | %1100   ; Point VIC-II control register at mapped characters.
- 
-  enableirq
+	poke \CPU_IO, (peek(\CPU_IO) & %11111011)               ; The '0' in bit 2 tells the CPU to stop looking at I\O
+															; and to start looking at the character set in ROM so that it can be read.
 
+	memcpy \CHAR_ROM, \CHAR_RAM, \NUMCHARS                  ; Copy the 2KB ROM character set to RAM starting at location $3000.
+ 
+	poke \CPU_IO, (peek(\CPU_IO) | %0100)                   ; Switch I\O back in instead of character set in ROM.
+	
+	poke \VIC_CTRL, (peek(\VIC_CTRL) & %11110000) | %1100   ; Tell the VIC-II to from now on look at location $3000 for the character set. 
+															; This is controlled by bits 1, 2 and 3 of location $D018 (VIC_CTRL)
+															; counting from right to left. Those three bits represent a number which
+															; when multiplied by 2048 gives the memory location where the character set 
+															; starts.
+															; Looking at the 'poke' above, we are ORing with the binary value 1100
+															; Ignoring the rightmost bit, we have 110 = decimal 6 x 2048 = 12288 which
+															; in hex is our location $3000.
+	
+	enableirq												; Interrupts back on.
+
+	;memset \CHAR_RAM, 2048, 0                              ; Clear user defined character set.
+															; Uncomment this line to see the result of the CreateStarScreen 
+															; routine below.
+	
 endproc
 
 ; ------------------------------------------------------------------------------------------------------------------------------------
 ; Initial screen setup.
+; 
+; This routine draws columns of characters onto the C64 text screen. 
 ; ------------------------------------------------------------------------------------------------------------------------------------
 proc CreateStarScreen
 
-  ;poke 53272,21
-  char! = 0
-  colourindex! = 0
-  offset = 0
+	char! = 0
+	colourindex! = 0
+	offset = 0
   
-  poke \SCRN_CTRL, peek(\SCRN_CTRL) & %11101111    ; Screen off
+	poke \SCRN_CTRL, peek(\SCRN_CTRL) & %11101111    		; Turn the screen off for speed and tidiness.
   
-  col! = 0
-  repeat
+	col! = 0
+	repeat													; C64 character text screen has 40 columns.
 	
-    char! = \StarfieldRow![col!] 
+		char! = \StarfieldRow![col!] 						; Get the next character number from the StarfieldRow array. The first one is character 58 
+															; which is a ':'.
 	
-    row = 0
-    repeat
+		row = 0												; C64 character text screen has 25 rows.
+		repeat
 
-      ;charat col!, row!, char!
-      offset = (col! + (row * 40))
-      poke \SCREEN + offset, char!
+			offset = (col! + (row * 40))					; The text screen can be though of as a grid. however in memory 
+															; it starts at location $0400 and is comprised of 1000 memory locations.
+															; Given a row and column this calculation gives the offset from the start of screen memory 
+															; to the location we want.
+															
+			poke \SCREEN + offset, char!					; Stick the current character onto the screen at the current row and column.
       
-      inc char!
+			inc char!										; Point at the next char in the array.
 	  
-      if char! = 83 then
-        char! = 58      
-      endif
+			if char! = 83 then
+				char! = 58     								; If we've gone past character 83 then start again.
+			endif
 	  
-      if char! = 108 then
-        char! = 83
-      endif  
+			if char! = 108 then								
+				char! = 83									; If we've gone past character 107 then start again.
+			endif  
+			
+			poke \COLOUR + offset, ~						
+				\StarfieldColours![colourindex!]			; The colours of the C64 character screen are defined by the 1000 locations from $D800
+															; onwards, each location corresponding to a location on the character screen at $0400
+															; So we put the current colour from the colour array into the colour location corresponding
+															; to the current row and column on the text screen.
+			inc row
 
-      poke \COLOR + offset, \StarfieldColours![colourindex!]
-
-      inc row
-
-    until row = 23
+		until row = 23
       
-    inc colourindex!
-    if colourindex! > 19 then
-      colourindex! = 0
-    endif
-    
-    inc col!
-    
-  until col! = 39
+		inc colourindex!									; Next column, next colour.	
 	
-  poke \SCRN_CTRL, peek(\SCRN_CTRL) | %00010000    ; Screen on
+		if colourindex! > 19 then
+			colourindex! = 0
+		endif
+    
+		inc col!
+    
+	until col! = 39
+	
+	poke \SCRN_CTRL, peek(\SCRN_CTRL) | %00010000    		; Turn the screen back on.
   
-  ; poke 198,0: wait 198, 1
+	; poke 198,0: wait 198, 1								; This waits for a keypress.
 	
 endproc
 
 ; ------------------------------------------------------------------------------------------------------------------------------------
-; Business end of things.
+; Main routine.
 ; ------------------------------------------------------------------------------------------------------------------------------------
 start:
   
-  poke \BORDER, 0                                         ; Black screen background and border.
-  poke \BACKGR, 0
+	poke \BORDER, 0                                         ; Black screen background and border.
+	poke \BACKGR, 0
   
-  copy_charset_to_ram                                     
+	CopyCharsetToRam 										; Copy the ROM character set to RAM.                                    
 
-  ;memset \CHAR_RAM, 2048, 0                              ; Clear user defined character set
+	CreateStarScreen										; Set up the initial screen.
   
-  CreateStarScreen
-  
-  \rastercount! = 0
-  
+	\rastercount! = 0
+	\blinkflag! = 1
+	goto loop
+	
 loop:
   
-;  asm "
-;@loop
-; lda #$ff                        ; Wait for raster to be off screen
-;@wait
-; cmp $d012
-; bne @wait
-;     "
+	watch \RASTERLINE, 255          						; Wait for raster to be offscreen. We do our drawing at that point 
+															; to avoid flicker.
   
-  watch \RASTERLINE, 255          ; Wait for raster to be offscreen.
-  
-  inc \rastercount!               ; Will automatically wrap 255 to 0 
-  gosub DoStarfield
-  goto loop
+	inc \rastercount!               						; A counter controlling which group of stars is redrawn, i.e. 
+															; this implements the different star speeds. Will automatically wrap 255 to 0 
+	
+	gosub DoStarfield										; Draw the stars.
+	
+	goto loop
     
 DoStarfield:
   
-      ; Static flickering stars.
-      if \rastercount! < 231 then
-        poke \staticStar1, peek(staticStar1) | 192
-        poke \staticStar2, peek(staticStar2) | 192
-      else
-        poke \staticStar1, 0
-        poke \staticStar2, 0
-      endif  
   
-      poke starfieldPtr,0
-      poke starfieldPtr2,0
-      poke starfieldPtr3,0
-      poke starfieldPtr4,0
-      
-      ; -- Every other frame
-      if (\rastercount! & 1) = 1 then
-        inc \starfieldPtr
-        poke \starfieldPtr, peek(starfieldPtr) | Star1Shape    
-        ;poke \starfieldPtr-1, 0
-        if \starfieldPtr = \STAR1LIMIT then
-          \starfieldPtr = \STAR1INIT
-        endif
-      else
-        poke \starfieldPtr, peek(starfieldPtr) | Star1Shape        
-      endif 
+  on \blinkflag! gosub BlinkOne, BlinkTheOther				; Handle the static blinking stars.
 
-      ; one pixel per frame
-      inc \starfieldPtr2
-      poke \starfieldPtr2, peek(starfieldPtr2) | Star2Shape   
-      ;poke \starfieldPtr2-1, 0
-      if \starfieldPtr2 = \STAR2LIMIT then
-        \starfieldPtr2 = \star2Reset
-      endif
+  poke starfieldPtr,0
+  poke starfieldPtr2,0
+  poke starfieldPtr3,0
+  poke starfieldPtr4,0
   
-      ; -- Every other frame
-      if (\rastercount! & 1) = 1 then
-        inc \starfieldPtr3
-        poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape   
+  
+  if (\rastercount! & 1) = 1 then
+    inc \starfieldPtr										; Star 1 draws every other frame.
+    poke \starfieldPtr, peek(starfieldPtr) | Star1Shape    
+    ;poke \starfieldPtr-1, 0
+    if \starfieldPtr = \STAR1LIMIT then
+      \starfieldPtr = \STAR1INIT
+    endif
+  else
+    poke \starfieldPtr, peek(starfieldPtr) | Star1Shape        
+  endif 
+
+  ; one pixel per frame
+  inc \starfieldPtr2
+  poke \starfieldPtr2, peek(starfieldPtr2) | Star2Shape   
+  ;poke \starfieldPtr2-1, 0
+  if \starfieldPtr2 = \STAR2LIMIT then
+    \starfieldPtr2 = \star2Reset
+  endif
+
+  ; -- Every other frame
+  if (\rastercount! & 1) = 1 then
+    inc \starfieldPtr3
+    poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape   
 ;        poke \starfieldPtr-1, 0
-        if \starfieldPtr3 = \STAR3LIMIT then
-           \starfieldPtr3 = \star3Reset
-        endif
-      else
-        poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape
-      endif   
+    if \starfieldPtr3 = \STAR3LIMIT then
+       \starfieldPtr3 = \star3Reset
+    endif
+  else
+    poke \starfieldPtr3, peek(starfieldPtr3) | Star3Shape
+  endif   
+
+  ; two pixels per frame
+  inc \starfieldPtr4
+  inc \starfieldPtr4
+  poke \starfieldPtr4, peek(starfieldPtr4) | Star4Shape
+  poke \starfieldPtr4-2, 0
+  if \starfieldPtr4 = \STAR4LIMIT then
+    \starfieldPtr4 = \star4Reset
+  endif
+      
+  return
+
+BlinkOne:
+    
+  if \rastercount! < 231 then
+      poke \staticStar1, peek(staticStar1) | 192
+  else
+      poke \staticStar1, 0
+  endif  
+
+  \blinkflag! = 0
+
+  return    
+      
+BlinkTheOther:
+
+	if \rastercount! < 231 then
+		poke \staticStar2, peek(staticStar2) | 192
+	else
+		poke \staticStar2, 0
+	endif  
+
+	\blinkflag! = 1
+
+  return
   
-      ; two pixels per frame
-      inc \starfieldPtr4
-      inc \starfieldPtr4
-      poke \starfieldPtr4, peek(starfieldPtr4) | Star4Shape
-      poke \starfieldPtr4-2, 0
-      if \starfieldPtr4 = \STAR4LIMIT then
-        \starfieldPtr4 = \star4Reset
-      endif
-      
-  return
-
-  DoStar2:
-
-      ; One per frame
-      inc \starfieldPtr2
-      poke \starfieldPtr2, peek(starfieldPtr2) | 12
-        
-  return
-      
 ; ------------------------------------------------------------------------------------------------------------------------------------
 ; Data declarations.
 ; ------------------------------------------------------------------------------------------------------------------------------------ 
