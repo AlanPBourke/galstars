@@ -42,7 +42,7 @@ const SCREEN        = $0400
 const COLOUR        = $D800
 const BORDER        = $D020
 const BACKGR        = $D021
-const CHAR_ROM       = $D000
+const CHAR_ROM      = $D000
 const CHAR_RAM      = $3000
 const NUMCHARS      = $0800 ; 256 chars x 8 bytes each 
 
@@ -75,7 +75,7 @@ dim StarfieldPtr    fast
 dim StarfieldPtr2   fast
 dim StarfieldPtr3   fast
 dim StarfieldPtr4   fast 
-dim Blinkflag!      fast
+;dim TempWork!       fast
 
 goto start
 
@@ -186,8 +186,8 @@ start:
 
     CreateStarScreen                                        ; Set up the initial screen.
   
-    \RasterCount!   = 0
-    \Blinkflag!     = 1
+    \RasterCount!   = 1
+    
     \StarfieldPtr   = \Star1Init
     \StarfieldPtr2  = \Star2Init
     \StarfieldPtr3  = \Star3Init
@@ -209,8 +209,6 @@ loop:
 	
 DoStarfield:
   
-    on \Blinkflag! gosub BlinkOne, BlinkTheOther            ; Handle the static blinking stars.
-
     poke StarfieldPtr,0                                     ; Clear any existing stars by zeroing their memory location
     poke StarfieldPtr2,0                                    
     poke StarfieldPtr3,0
@@ -249,39 +247,29 @@ DoStarfield:
     endif	  
 
     ; Star 4 -----------------------------------------------
-    inc \StarfieldPtr4                                        ; Star 4 updates 2 pixels every frame.
+    inc \StarfieldPtr4                                          ; Star 4 updates 2 pixels every frame.
     inc \StarfieldPtr4
-    poke \StarfieldPtr4, peek(StarfieldPtr4) | Star4Shape
-    poke \StarfieldPtr4 - 2, 0
+    poke \StarfieldPtr4, peek(StarfieldPtr4) | Star4Shape       
     if \StarfieldPtr4 = \Star4Limit then
         \StarfieldPtr4 = \Star4Reset
     endif
-	  
-    return
 
-BlinkOne:
-	
-    if \RasterCount! < 231 then
-        poke \StaticStar1, peek(StaticStar1) | 192
+    ; Static stars -----------------------------------------
+    if \RasterCount! < 230 then                                 ; These use the same shape as star 4.
+        poke \StaticStar1, peek(StaticStar1) | Star4Shape
     else
         poke \StaticStar1, 0
-    endif	 
-
-    \Blinkflag! = 0
-
-  return	
-	  
-BlinkTheOther:
-
-    if \RasterCount! < 231 then
-        poke \StaticStar2, peek(StaticStar2) | 192
+    endif
+    
+    \TempWork! = \RasterCount!^$80                              
+                                                                
+    if \TempWork! < 230 then
+        poke \StaticStar2, peek(StaticStar2) | Star4Shape
     else
         poke \StaticStar2, 0
-    endif  
-
-    \Blinkflag! = 1
-
-  return
+    endif
+    
+    return
   
 ; ------------------------------------------------------------------------------------------------------------------------------------
 ; Data declarations.
