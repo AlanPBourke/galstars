@@ -75,7 +75,7 @@ dim StarfieldPtr    fast
 dim StarfieldPtr2   fast
 dim StarfieldPtr3   fast
 dim StarfieldPtr4   fast 
-;dim TempWork!       fast
+dim TempWork!       fast
 
 goto start
 
@@ -255,14 +255,15 @@ DoStarfield:
     endif
 
     ; Static stars -----------------------------------------
-    if \RasterCount! < 230 then                                 ; These use the same shape as star 4.
-        poke \StaticStar1, peek(StaticStar1) | Star4Shape
+    if \RasterCount! < 230 then                                 
+        poke \StaticStar1, peek(StaticStar1) | Star4Shape       ; Uses same shape as Star 4.       
     else
         poke \StaticStar1, 0
     endif
     
-    \TempWork! = \RasterCount!^$80                              
-                                                                
+    \TempWork! = \RasterCount!^$80                              ; Flip most significant bit. So TempWork will
+                                                                ; cycle between decimal 128 and 0.
+
     if \TempWork! < 230 then
         poke \StaticStar2, peek(StaticStar2) | Star4Shape
     else
