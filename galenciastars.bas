@@ -156,7 +156,7 @@ proc CreateStarScreen
                                                             ; to the current row and column on the text screen.
             inc row
 
-        until row = 23
+        until row = 24
 	  
         inc colourindex!                                    ; Next column, next colour.	
 	
@@ -166,7 +166,7 @@ proc CreateStarScreen
 	
         inc col!
 	
-    until col! = 39
+    until col! = 40
 	
     poke \SCRN_CTRL, peek(\SCRN_CTRL) | %00010000           ; Turn the screen back on.
   
@@ -185,7 +185,8 @@ start:
     CopyCharsetToRam                                        ; Copy the ROM character set to RAM.									
 
     CreateStarScreen                                        ; Set up the initial screen.
-  
+    
+    
     \RasterCount!   = 1
     
     \StarfieldPtr   = \Star1Init
