@@ -1,0 +1,409 @@
+--- Symbol List (sorted by symbol)
+1.1                      0826              (R )
+10.l                     08d2              (R )
+105.l                    09eb              (R )
+11.l                     08df              (R )
+111.l                    0a06              (R )
+117.phf                  0a25              (R )
+117.q                    0a28              (R )
+12.l                     08fe              (R )
+127.pht                  0a47              (R )
+127.q                    0a49              (R )
+13.l                     090b              (R )
+138.l                    0a6c              (R )
+14.l                     0927              (R )
+144.l                    0a87              (R )
+15.l                     0934              (R )
+150.phf                  0aa6              (R )
+150.q                    0aa9              (R )
+161.l                    0ac7              (R )
+167.l                    0ae2              (R )
+175.l                    0b03              (R )
+181.l                    0b1e              (R )
+187.phf                  0b3d              (R )
+187.q                    0b40              (R )
+195.end                  0b59              (R )
+195.false                0b57              (R )
+202.l                    0b6c              (R )
+210.end                  0b94              (R )
+210.false                0b92              (R )
+217.l                    0ba7              (R )
+226.q                    0bde              (R )
+229.l                    0bf5              (R )
+244.l                    0c33              (R )
+249.l                    0c4a              (R )
+267.l                    0ca6              (R )
+3.q                      0844              (R )
+30.clear                 0883              (R )
+30.low                   088b              (R )
+31.q                     08a1              (R )
+312.l                    0d5f              (R )
+314.end                  0d72              (R )
+314.true                 0d70              (R )
+320.end                  0d89              (R )
+320.true                 0d87              (R )
+334.l                    0dc4              (R )
+345.phf                  0dfd              (R )
+345.q                    0e00              (R )
+350.end                  0e18              (R )
+350.true                 0e16              (R )
+357.end                  0e32              (R )
+357.true                 0e30              (R )
+362.l                    0e44              (R )
+367.q                    0ea0              (R )
+367.skip                 0e6d              (R )
+367.skip2                0e85              (R )
+368.skip                 0e6c              (R )
+369.skip                 0e84              (R )
+370.skip                 0ea0              (R )
+371.1                    0ea8              (R )
+371.q                    0ec4              (R )
+372.dst                  0002              (R )
+372.md1                  0ece              (R )
+372.md2                  0ed8              (R )
+372.md3                  0edc              (R )
+372.md4                  0ee2              (R )
+372.siz                  0004              (R )
+373.dst                  0004              (R )
+373.md1                  0ee9              (R )
+373.md2                  0ef7              (R )
+373.md3                  0efb              (R )
+373.md4                  0f03              (R )
+373.siz                  0006              (R )
+373.src                  0002              (R )
+376.q                    0f24              (R )
+377.q                    0f39                  
+378.q                    0f4e                  
+379.q                    0f63                  
+380.1                    0fa6              (R )
+380.2                    0fd2              (R )
+380.3                    0ffe              (R )
+380.4                    101f              (R )
+380.q                    1029              (R )
+381.l                    0f86              (R )
+382.l                    0f93              (R )
+383.l                    0fb2              (R )
+384.l                    0fbf              (R )
+385.l                    0fde              (R )
+386.l                    0feb              (R )
+387.l                    1007              (R )
+388.l                    1014              (R )
+39.l                     08db              (R )
+4.q                      0859                  
+44.l                     08f0              (R )
+49.l                     0905              (R )
+5.q                      086e                  
+54.l                     091a              (R )
+57.pht                   092f              (R )
+57.q                     0931              (R )
+6.q                      0883                  
+68.l                     0954              (R )
+7.1                      08c6              (R )
+7.2                      08f2              (R )
+7.3                      091e              (R )
+7.4                      093f              (R )
+7.q                      0949              (R )
+74.l                     096f              (R )
+8.l                      08a6              (R )
+80.phf                   098e              (R )
+80.q                     0991              (R )
+9.l                      08b3              (R )
+91.l                     09af              (R )
+97.l                     09ca              (R )
+_CO_1                    0e25                  
+_CO_2                    0ddb                  
+_CO_6                    08bf                  
+_DO_1                    0cd5              (R )
+_DO_2                    0cec              (R )
+_DO_6                    08bf              (R )
+_ED_1                    0e3a              (R )
+_ED_2                    0e08              (R )
+_ED_6                    08c9              (R )
+_EI_10                   0ae5              (R )
+_EI_11                   0ab6                  
+_EI_12                   0b4d                  
+_EI_13                   0b82              (R )
+_EI_14                   0bbd              (R )
+_EI_3                    0d7c                  
+_EI_4                    0d93                  
+_EI_5                    0e22                  
+_EI_7                    09cd              (R )
+_EI_8                    099e                  
+_EI_9                    0a35                  
+_EL_10                   0ab9              (R )
+_EL_11                   0ab6              (R )
+_EL_12                   0b4d              (R )
+_EL_13                   0b7d              (R )
+_EL_14                   0bb8              (R )
+_EL_3                    0d7c              (R )
+_EL_4                    0d93              (R )
+_EL_5                    0e22              (R )
+_EL_7                    09a1              (R )
+_EL_8                    099e              (R )
+_EL_9                    0a35              (R )
+AIM65                    0000              (R )
+APPLE_BAD_BYTE           0000                  
+ARG                      002e              (R )
+ARG_LAST                 0031                  
+ARGEXTENSION             001e                  
+ARGSIGN                  0032                  
+BYTES_FP                 0004              (R )
+c128                     0800              (R )
+c16                      0402              (R )
+c264                     0400              (R )
+c64                      0100              (R )
+CHARAC                   0015              (R )
+CIA1_CRA                 dc0e                  
+CIA1_CRB                 dc0f                  
+CIA1_IRQCTR              dc0d              (R )
+CIA1_TBHI                dc07                  
+CIA1_TBLO                dc06                  
+CIA_DIRECTIONALR         dd00                  
+COLOR_RAM                d800                  
+CONFIG_10A               0000              (R )
+CONFIG_11                0000                  
+CONFIG_2                 0000                  
+CONFIG_2A                0001                  
+CONFIG_2B                0000                  
+CONFIG_CBM_ALL           0001                  
+CONFIG_ROR_WORKAROUND    0000              (R )
+CONFIG_SMALL             0001              (R )
+cplus4                   0401              (R )
+data_start               102c                  
+DEST                     0018                  
+ERR_DEVICE_NOT_PRESENT   0005                  
+ERR_DEVICE_NOT_READY     000a                  
+ERR_DIVZERO              0014                  
+ERR_FILE_NOT_FOUND       0004                  
+ERR_FILE_NOT_OPEN        0003                  
+ERR_FILE_OPEN            0002                  
+ERR_ILLEGAL_DEVICE_NO    0009                  
+ERR_ILLEGAL_DIRECT       0015                  
+ERR_ILQTY                000e                  
+ERR_MISSING_FILENAME     0008                  
+ERR_NOT_INPUT_FILE       0006                  
+ERR_NOT_OUTPUT_FILE      0007                  
+ERR_OVERFLOW             000f                  
+ERR_READ_ERROR           000b                  
+ERR_TOO_MANY_FILES       0001                  
+ERRNO                    0ec7                  
+EXPON                    0024                  
+EXPSGN                   0026                  
+F_src2.copycharsettoram  0bcc              (R )
+F_src2.createstarscreen  0c9c              (R )
+FAC                      0027              (R )
+FAC_LAST                 002a                  
+FACEXTENSION             0034                  
+FACSIGN                  002b                  
+FASTIRQ                  0000              (R )
+FPULL                    0000                  
+FPUSH                    0000                  
+HIGHDS                   001f                  
+HIGHTR                   0021                  
+HSCR                     d016                  
+I_BINREAD_IMPORTED       0000 ????         (R )
+I_BINWRITE_IMPORTED      0000 ????         (R )
+I_CALC_SCRROWPTR_IMPORTED 0000 ????         (R )
+I_EXP_IMPORTED           0000 ????         (R )
+I_F_src2.copycharsettoram_IMPORTED 0001              (R )
+I_F_src2.createstarscreen_IMPORTED 0001              (R )
+I_FIN_IMPORTED           0000 ????         (R )
+I_FMOD_IMPORTED          0000 ????         (R )
+I_FOUT_IMPORTED          0000 ????         (R )
+I_FPLIB_IMPORTED         0000 ????         (R )
+I_IO_INPUT_IMPORTED      0000 ????         (R )
+I_IO_READST_IMPORTED     0000 ????         (R )
+I_LTOF_IMPORTED          0000 ????         (R )
+I_MEMCPY_IMPORTED        0001              (R )
+I_MEMSET_IMPORTED        0001              (R )
+I_MEMSHIFT_IMPORTED      0000 ????         (R )
+I_NUCLEUS_DIV16_IMPORTED 0000 ????         (R )
+I_NUCLEUS_DIV24_IMPORTED 0000 ????         (R )
+I_NUCLEUS_DIVBYTE_IMPORTED 0000 ????         (R )
+I_NUCLEUS_DIVU16_IMPORTED 0000 ????         (R )
+I_NUCLEUS_MUL16_IMPORTED 0001              (R )
+I_NUCLEUS_MUL24_IMPORTED 0000 ????         (R )
+I_NUCLEUS_MULBYTE_IMPORTED 0000 ????         (R )
+I_NUCLEUS_MULU16_IMPORTED 0001              (R )
+I_PET2SC_IMPORTED        0000 ????         (R )
+I_RANDOMIZE_IMPORTED     0000 ????         (R )
+I_RESET_SCRVECTORS_IMPORTED 0000 ????         (R )
+I_RND_IMPORTED           0000 ????         (R )
+I_RNDL_IMPORTED          0000 ????         (R )
+I_RUNTIME_ERROR_IMPORTED 0000 ????         (R )
+I_SQRL_IMPORTED          0000 ????         (R )
+I_SQRW_IMPORTED          0000 ????         (R )
+I_STDLIB_BYTE_TO_PETSCII_IMPORTED 0000 ????         (R )
+I_STDLIB_PRINT_BYTE_IMPORTED 0000 ????         (R )
+I_STDLIB_PRINT_DECIMAL_IMPORTED 0000 ????         (R )
+I_STDLIB_PRINTSTR_IMPORTED 0000 ????         (R )
+I_STDLIB_TAB_IMPORTED    0000 ????         (R )
+I_STR_BTOS_IMPORTED      0000 ????         (R )
+I_STR_CONCAT_IMPORTED    0000 ????         (R )
+I_STR_DTOS_IMPORTED      0000 ????         (R )
+I_STR_LCASE_IMPORTED     0000 ????         (R )
+I_STR_LEFT_IMPORTED      0000 ????         (R )
+I_STR_LTOS_IMPORTED      0000 ????         (R )
+I_STR_MID_IMPORTED       0000 ????         (R )
+I_STR_RIGHT_IMPORTED     0000 ????         (R )
+I_STR_TONULLTERM_IMPORTED 0000 ????         (R )
+I_STR_UCASE_IMPORTED     0000 ????         (R )
+I_STR_WTOS_IMPORTED      0000 ????         (R )
+I_STRCMP_IMPORTED        0000 ????         (R )
+I_STRMOV_IMPORTED        0000 ????         (R )
+I_STRREAD_IMPORTED       0000 ????         (R )
+I_STRREMOV_IMPORTED      0000 ????         (R )
+I_STRREMOV_SC_IMPORTED   0000 ????         (R )
+I_STRSCRATCH_IMPORTED    0000 ????         (R )
+I_STRWRITE_IMPORTED      0000 ????         (R )
+INDEX                    0016                  
+INDX                     0023                  
+IO_DDRA                  dc02                  
+IO_DDRB                  dc03                  
+IO_KEYR                  dc01                  
+IO_KEYW                  dc00                  
+IRQ_BACKGROUND           0002              (R )
+IRQ_BACKGROUND_V         0fba                  
+IRQ_RASTER               0001              (R )
+IRQ_RASTER_V             0f8e              (R )
+IRQ_SPRITE               0004              (R )
+IRQ_SPRITE_V             0fe6                  
+IRQ_SYSTEM               0010              (R )
+IRQ_TIMER                0008              (R )
+IRQ_TIMER_V              100f                  
+IRQFLAGS                 0f04              (R )
+IRQRESET                 0f12              (R )
+IRQSETUP                 0f05              (R )
+IRQVECTOR                0314              (R )
+JIFFY                    00a0                  
+KBD                      0000                  
+KERNAL_CHKIN             ffc6                  
+KERNAL_CHKOUT            ffc9                  
+KERNAL_CHRIN             ffcf                  
+KERNAL_CHROUT            ffd2                  
+KERNAL_CLOSE             ffc3                  
+KERNAL_CLRCHN            ffcc                  
+KERNAL_GETIN             ffe4                  
+KERNAL_HOME              e566                  
+KERNAL_LOAD              ffd5                  
+KERNAL_OPEN              ffc0                  
+KERNAL_PLOT              fff0                  
+KERNAL_READST            ffb7                  
+KERNAL_SAVE              ffd8                  
+KERNAL_SCREEN_ADDR       0288                  
+KERNAL_SETLFS            ffba                  
+KERNAL_SETNAM            ffbd                  
+L_src2.dostarfield       08c9              (R )
+L_src2.rowchars          102c              (R )
+L_src2.starcolours       1054              (R )
+L_src2.start             082e              (R )
+library_start            0e53              (R )
+LOWTR                    0025                  
+LOWTRX                   0025              (R )
+MANTISSA_BYTES           0003                  
+MAX_EXPON                000a                  
+MEMCPY                   0ee3              (R )
+MEMSET                   0ec8              (R )
+next_line                080b              (R )
+NUCLEUS_MUL16            0e53              (R )
+NUCLEUS_MULU16           0ea1              (R )
+pet                      1000              (R )
+pet2001                  1009                  
+pet3                     1010                  
+pet3008                  1011                  
+pet3016                  1012                  
+pet3032                  1014                  
+pet4                     1020              (R )
+pet4016                  1022                  
+pet4032                  1024                  
+pet8032                  1044                  
+prg_start                080d              (R )
+R0                       0002              (R )
+R1                       0003              (R )
+R2                       0004              (R )
+R3                       0005              (R )
+R4                       0006              (R )
+R5                       0007              (R )
+R6                       0008              (R )
+R7                       0009                  
+R8                       000a                  
+R9                       000b                  
+RA                       000c                  
+RAST                     d012                  
+RAST8                    d011                  
+RB                       000d                  
+RC                       000f                  
+RD                       0010                  
+RE                       0011                  
+RESULT                   0018              (R )
+RESULT_LAST              001b                  
+RF                       0012                  
+routines_start           0bcc                  
+SAREG                    030c                  
+SCINIT                   ff81                  
+SERLEN                   002c                  
+SGNCPR                   0033                  
+SHIFTSIGNEXT             002d                  
+SN                       0014                  
+SP                       000e              (R )
+SPREG                    030f                  
+SRVEC                    00d9                  
+stack                    0100                  
+STACKFRAME_TOP           cf00              (R )
+STATUS                   0090                  
+STRING_BUFFER1           033c                  
+STRING_BUFFER2           039d                  
+STRING_WORKAREA          cf00                  
+STRNG1                   0033              (R )
+STRNG2                   0035                  
+SXREG                    030d                  
+SYREG                    030e                  
+TARGET                   0100              (R )
+TED_BACKGROUND           ff15                  
+TED_BORDER               ff19                  
+TED_CRSR_HI              ff0c                  
+TED_CRSR_LO              ff0d                  
+TEMP1                    001e              (R )
+TEMP1X                   001f                  
+TEMP2                    0023                  
+TEMP3                    0039              (R )
+TH                       0013                  
+TMPEXP                   0023                  
+USEIRQ                   0001              (R )
+USESFX                   0000              (R )
+USESPR                   0000              (R )
+V_src2.CreateStarScreen_.char 1068              (R )
+V_src2.CreateStarScreen_.col 106a              (R )
+V_src2.CreateStarScreen_.colourindex 1069              (R )
+V_src2.CreateStarScreen_.offset 106d              (R )
+V_src2.CreateStarScreen_.row 106b              (R )
+V_src2.rastercount       003b                  
+V_src2.starfieldcolours  1054                  
+V_src2.starfieldptr      003d                  
+V_src2.starfieldptr2     003f                  
+V_src2.starfieldptr3     0041                  
+V_src2.starfieldptr4     0043                  
+V_src2.starfieldrow      102c                  
+V_src2.tempwork          003c                  
+VARPNT                   0037                  
+vars_end                 106f                  
+vars_start               1068              (R )
+vic20                    0200              (R )
+vic20_3k                 0201              (R )
+vic20_8k                 0202              (R )
+VICI_BORDER_BG           900f                  
+VICII_BACKGROUND         d021                  
+VICII_BORDER             d020                  
+VICII_IRQCTR             d01a              (R )
+VICII_IRQSTATUS          d019              (R )
+VICII_MEMCONTROL         d018                  
+VICII_RASTER             d012                  
+VICII_SCREENCTR          d011                  
+VMODE_BITMAP             0002                  
+VMODE_EXT                0003                  
+VMODE_HIRES              0000                  
+VMODE_MULTI              0001                  
+VMODE_TEXT               0001                  
+VSCR                     d011                  
+XCBIRQ                   0f79              (R )
+--- End of Symbol List.

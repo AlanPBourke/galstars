@@ -123,22 +123,25 @@ sub CreateStarScreen() static
     dim char        as byte 
     dim colourindex as byte 
     dim col         as byte
-    dim row         as byte 
+    dim row         as int                              
     dim offset      as int 
     
     poke SCRN_CTRL, peek(SCRN_CTRL) AND %11101111           ' Turn the screen off for speed and tidiness.
   
+    row = 0
     col = 0
+    offset = 0
     
-    do until col = 40                                       ' C64 character text screen has 40 columns.
+    do 
 	
         char = StarfieldRow(col)                            ' Get the next character number from the StarfieldRow array. The first one is character 58 
                                                             ' which is a ':'.
 	
         row = 0                                             ' C64 character text screen has 25 rows.
         
-        do until row = 24
-
+        ''do until row = 24
+        do
+        
             offset = (col + (row * 40))                     ' The text screen can be though of as a grid. however in memory 
                                                             ' it starts at location $0400 and is comprised of 1000 memory locations.
                                                             ' Given a row and column this calculation gives the offset from the start of screen memory 
@@ -164,10 +167,9 @@ sub CreateStarScreen() static
                                                             ' to the current row and column on the text screen.
             row = row + 1
 
-        loop    
-        ''until row = 24
+        loop until row = 24
 	  
-        colourindex = colourindex + 1                          ' Next column, next colour.	
+        colourindex = colourindex + 1                       ' Next column, next colour.	
 	
         if colourindex > 19 then
             colourindex = 0
@@ -175,7 +177,7 @@ sub CreateStarScreen() static
 	
         col = col + 1
 	
-    loop
+    loop until col = 40                                    ' C64 character text screen has 40 columns.
 	
     poke SCRN_CTRL, peek(SCRN_CTRL) OR %00010000           ' Turn the screen back on.
   
@@ -194,7 +196,7 @@ start:
     call CopyCharsetToRam()                                 ' Copy the ROM character set to RAM.									
     call CreateStarScreen()                                 ' Set up the initial screen.
     
-    charset 6                                               ' bank 0, chars at $3000
+    ''charset 6                                               ' bank 0, chars at $3000
     
     RasterCount    = 1
     
@@ -203,7 +205,7 @@ start:
     StarfieldPtr3  = Star3Init
     StarfieldPtr4  = Star4Init
 
-    on raster 255 gosub DoStarfield
+    on raster 210 gosub DoStarfield
     system interrupt off
     raster interrupt on
     
@@ -224,7 +226,6 @@ DoStarfield:
         poke StarfieldPtr, peek(StarfieldPtr) or Star1Shape  	   
         
         if StarfieldPtr = Star1Limit then
-            background 1
             StarfieldPtr = Star1Reset
         end if
     
