@@ -68,7 +68,6 @@ const Star4Reset    = $3298
 const StaticStar1   = $3250 ' 2 Locations for blinking static stars
 const StaticStar2   = $31e0
 
-' v2.1 ! = byte, # or empty = integer, % = float, $ = string
 dim fast RasterCount    as byte
 dim fast TempWork       as byte
 
@@ -181,7 +180,7 @@ sub CreateStarScreen() static
 	
     poke SCRN_CTRL, peek(SCRN_CTRL) OR %00010000           ' Turn the screen back on.
   
-	' poke 198,0: wait 198, 1                               ' If uncommented this waits for a keypress.
+	'poke 198,0: wait 198, 1                               ' If uncommented this waits for a keypress.
 	
 end sub
 
@@ -195,8 +194,6 @@ start:
   
     call CopyCharsetToRam()                                 ' Copy the ROM character set to RAM.									
     call CreateStarScreen()                                 ' Set up the initial screen.
-    
-    ''charset 6                                               ' bank 0, chars at $3000
     
     RasterCount    = 1
     
