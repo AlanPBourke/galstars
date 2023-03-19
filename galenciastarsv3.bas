@@ -11,6 +11,7 @@
 ''
 ''
 '' Star shapes
+
 const Star1Shape    = %00000011  ' 3
 const Star2Shape    = %00001100  ' 12
 const Star3Shape    = %00110000  ' 48
