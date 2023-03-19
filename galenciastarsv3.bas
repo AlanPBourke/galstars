@@ -7,6 +7,8 @@
 '' game of the same name. Jason extracted the starfield ASM code into a standalone
 '' programme (see link below), and this is an XC-BASIC recreation of that.
 ''
+'' Better CreateStarScreen() routine by JJFlash-IT
+''
 ''
 '' Star shapes
 const Star1Shape    = %00000011  ' 3
@@ -92,36 +94,29 @@ end sub
 ' Initial screen setup.
 ' 
 ' This routine draws columns of characters onto the C64 text screen. 
+' The text screen can be though of as a grid. however in memory 
+' it starts at location $0400 and is comprised of 1000 memory locations.
+' Given a row and column this calculation gives the offset from the start of screen memory 
+' to the location we want.
+'
 ' ------------------------------------------------------------------------------------------------------------------------------------
 sub CreateStarScreen() static
 
     dim char        as byte 
     dim colourindex as byte 
-    dim col         as byte
-    dim row         as int                              
-    dim offset      as int 
+    dim offset      as word 
     
     poke SCRN_CTRL, peek(SCRN_CTRL) AND %11101111           ' Turn the screen off for speed and tidiness.
   
-    row = 0
-    col = 0
-    offset = 0
     
-    do 
+    for col as byte = 0 to 39
 	
         char = StarfieldRow(col)                            ' Get the next character number from the StarfieldRow array. The first one is character 58 
                                                             ' which is a ':'.
-	
-        row = 0                                             ' C64 character text screen has 25 rows.
+        offset = col
         
-        ''do until row = 24
-        do
+        for row as byte = 0 to 24
         
-            offset = (col + (row * 40))                     ' The text screen can be though of as a grid. however in memory 
-                                                            ' it starts at location $0400 and is comprised of 1000 memory locations.
-                                                            ' Given a row and column this calculation gives the offset from the start of screen memory 
-                                                            ' to the location we want.
-															
             poke  SCREENADDR + offset, char                 ' Stick the current character onto the screen at the current row and column.
 	  
             char = char + 1                                 ' Point at the next char in the array.
@@ -140,19 +135,16 @@ sub CreateStarScreen() static
                                                             ' onwards, each location corresponding to a location on the character screen at $0400
                                                             ' So we put the current colour from the colour array into the colour location corresponding
                                                             ' to the current row and column on the text screen.
-            row = row + 1
-
-        loop until row = 24
+           
+            offset = offset + 40
+           
+        next row
 	  
         colourindex = colourindex + 1                       ' Next column, next colour.	
 	
-        if colourindex > 19 then
-            colourindex = 0
-        end if
+        if colourindex > 19 then colourindex = 0
 	
-        col = col + 1
-	
-    loop until col = 40                                    ' C64 character text screen has 40 columns.
+    next col
 	
     poke SCRN_CTRL, peek(SCRN_CTRL) OR %00010000           ' Turn the screen back on.
   
